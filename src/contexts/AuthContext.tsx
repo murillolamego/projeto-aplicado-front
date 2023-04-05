@@ -51,7 +51,7 @@ export function AuthProvider({ children }) {
 
       console.log("REFRESH TOKEN", token);
 
-      (async () => {
+      await (async () => {
         const { accessToken, refreshToken } = await refreshRequest(token);
 
         setCookie(undefined, "projeto-aplicado-accesstoken", accessToken, {
@@ -67,14 +67,14 @@ export function AuthProvider({ children }) {
         setUser(user);
 
         console.log("UPDATED USER", user);
+        return;
       })();
     } else {
       console.log("TOKEN IS VALID");
+      setUser(user);
+
+      console.log("UPDATED USER 2", user);
     }
-
-    setUser(user);
-
-    console.log("UPDATED USER", user);
   }
 
   useEffect(() => {
@@ -119,7 +119,7 @@ export function AuthProvider({ children }) {
 
     console.log("USER", user);
 
-    //router.push("/dashboard");
+    router.push("/dashboard");
   }
 
   return (

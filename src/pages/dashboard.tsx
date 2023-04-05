@@ -1,12 +1,11 @@
 import Head from "next/head";
-import Image from "next/image";
 import { useContext } from "react";
-import { useForm } from "react-hook-form";
 
-import { Signup } from "@/components/signup";
 import { AuthContext } from "@/contexts/AuthContext";
 
-export default function Home() {
+export default function Dashboard() {
+  const { user } = useContext(AuthContext);
+
   return (
     <>
       <Head>
@@ -16,11 +15,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex items-center justify-center w-screen h-screen">
-        <div className="container flex items-center justify-center">
-          <div className="flex flex-col z-10 ">
-            <Signup />
-          </div>
-        </div>
+        <h1>{user?.email}</h1>
       </main>
     </>
   );
