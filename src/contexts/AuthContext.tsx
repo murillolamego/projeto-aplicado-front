@@ -1,7 +1,7 @@
 import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
 import { setCookie, parseCookies } from "nookies";
-import { createContext, useEffect, useState } from "react";
+import { createContext, ReactElement, useEffect, useState } from "react";
 
 import { refreshRequest, signInRequest } from "@/services/auth";
 
@@ -11,7 +11,7 @@ interface IUser {
   exp: number;
 }
 
-interface ISignInData {
+export interface ISignInData {
   email: string;
   password: string;
 }
@@ -21,16 +21,20 @@ interface IAuthContext {
   signIn: (data: ISignInData) => Promise<void>;
 }
 
+interface IProps {
+  children?: React.ReactNode;
+}
+
 export const AuthContext = createContext({} as IAuthContext);
 
-export function AuthProvider({ children }) {
+export function AuthProvider({ children }: IProps): ReactElement {
   const [user, setUser] = useState<IUser | null>(null);
 
   const router = useRouter();
 
   const isAuthenticated = !!user;
 
-  async function validateToken(currentAccessToken: string) {
+  async function validateToken(currentAccessToken: string): Promise<void> {
     console.log("VALIDATE TOKEN");
 
     const user = jwt_decode<IUser>(currentAccessToken);
@@ -51,23 +55,35 @@ export function AuthProvider({ children }) {
 
       console.log("REFRESH TOKEN", token);
 
-      await (async () => {
-        const { accessToken, refreshToken } = await refreshRequest(token);
+      await (async (): Promise<void> => {
+        const data = await refreshRequest(token);
 
-        setCookie(undefined, "projeto-aplicado-accesstoken", accessToken, {
-          maxAge: 60 * 60 * 1, // 1 hour
-        });
+        if (data) {
+          setCookie(
+            undefined,
+            "projeto-aplicado-accesstoken",
+            data.accessToken,
+            {
+              maxAge: 60 * 60 * 1, // 1 hour
+            },
+          );
 
-        setCookie(undefined, "projeto-aplicado-refreshtoken", refreshToken, {
-          maxAge: 60 * 60 * 1, // 1 hour
-        });
+          setCookie(
+            undefined,
+            "projeto-aplicado-refreshtoken",
+            data.refreshToken,
+            {
+              maxAge: 60 * 60 * 1, // 1 hour
+            },
+          );
 
-        const user = jwt_decode<IUser>(accessToken);
+          const user = jwt_decode<IUser>(data.accessToken);
 
-        setUser(user);
+          setUser(user);
 
-        console.log("UPDATED USER", user);
-        return;
+          console.log("UPDATED USER", user);
+          return;
+        }
       })();
     } else {
       console.log("TOKEN IS VALID");
@@ -87,39 +103,37 @@ export function AuthProvider({ children }) {
       return;
     }
     console.log("ALREADY LOGGED IN");
-    try {
-      (async () => {
-        console.log("SHOULD VALIDATE TOKEN");
-        await validateToken(currentAccessToken);
-      })();
-    } catch (e) {
-      console.log("ERROR");
-      console.log(e.message);
-    }
+
+    (async (): Promise<void> => {
+      console.log("SHOULD VALIDATE TOKEN");
+      await validateToken(currentAccessToken);
+    })();
   }, []);
 
-  async function signIn({ email, password }: ISignInData) {
+  async function signIn({ email, password }: ISignInData): Promise<void> {
     console.log("SIGN IN");
-    const { accessToken, refreshToken } = await signInRequest({
+    const data = await signInRequest({
       email,
       password,
     });
 
-    setCookie(undefined, "projeto-aplicado-accesstoken", accessToken, {
-      maxAge: 60 * 60 * 1, // 1 hour
-    });
+    if (data) {
+      setCookie(undefined, "projeto-aplicado-accesstoken", data.accessToken, {
+        maxAge: 60 * 60 * 1, // 1 hour
+      });
 
-    setCookie(undefined, "projeto-aplicado-refreshtoken", refreshToken, {
-      maxAge: 60 * 60 * 1, // 1 hour
-    });
+      setCookie(undefined, "projeto-aplicado-refreshtoken", data.refreshToken, {
+        maxAge: 60 * 60 * 1, // 1 hour
+      });
 
-    const user = jwt_decode<IUser>(accessToken);
+      const user = jwt_decode<IUser>(data.accessToken);
 
-    setUser(user);
+      setUser(user);
 
-    console.log("USER", user);
+      console.log("USER", user);
 
-    router.push("/dashboard");
+      router.push("/dashboard");
+    }
   }
 
   return (

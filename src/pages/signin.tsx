@@ -1,16 +1,16 @@
 import Head from "next/head";
 import Image from "next/image";
-import { useContext } from "react";
+import { ReactElement, useContext } from "react";
 import { useForm } from "react-hook-form";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { AuthContext, ISignInData } from "@/contexts/AuthContext";
 
-export default function Home() {
-  const { register, handleSubmit } = useForm();
+export default function Home(): ReactElement {
+  const { register, handleSubmit } = useForm<ISignInData>();
 
   const { signIn } = useContext(AuthContext);
 
-  async function handleSignIn(data) {
+  async function handleSignIn(data: ISignInData): Promise<void> {
     await signIn(data);
   }
 

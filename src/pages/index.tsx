@@ -1,12 +1,10 @@
 import Head from "next/head";
-import Image from "next/image";
-import { useContext } from "react";
-import { useForm } from "react-hook-form";
+import { ReactElement } from "react";
 
-import { Signup } from "@/components/signup";
-import { AuthContext } from "@/contexts/AuthContext";
+import { SignupUser } from "@/components/signupUser";
+import { UserSignupProvider } from "@/contexts/UserSignupContext";
 
-export default function Home() {
+export default function Signup(): ReactElement {
   return (
     <>
       <Head>
@@ -18,7 +16,9 @@ export default function Home() {
       <main className="flex items-center justify-center w-screen h-screen">
         <div className="container flex items-center justify-center">
           <div className="flex flex-col z-10 ">
-            <Signup />
+            <UserSignupProvider>
+              <SignupUser />
+            </UserSignupProvider>
           </div>
         </div>
       </main>

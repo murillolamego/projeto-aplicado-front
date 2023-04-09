@@ -1,4 +1,5 @@
 import { useState, Fragment } from "react";
+import { useForm } from "react-hook-form";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -7,18 +8,18 @@ import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 
-const steps = [
-  "Select campaign settings",
-  "Create an ad group",
-  "Create an ad",
-];
+import { FormUserBasicInfo } from "./forms/formUserBasicInfo";
+import { FormUserOptionalInfo } from "./forms/formUserOptionalInfo";
 
-export function Signup() {
+const steps = ["User 1", "User 2", "User 3"];
+
+export function SignupUser() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
+  const { register, handleSubmit } = useForm<ISignInData>();
 
   const isStepOptional = (step: number) => {
-    return step === 1;
+    return false;
   };
 
   const isStepSkipped = (step: number) => {
@@ -59,6 +60,14 @@ export function Signup() {
     setActiveStep(0);
   };
 
+  const signUp = (data) => {
+    console.log(data);
+  };
+
+  async function handleSignUp(data): Promise<void> {
+    await signUp(data);
+  }
+
   return (
     <Box sx={{ width: "100%" }}>
       <Stepper activeStep={activeStep}>
@@ -95,6 +104,8 @@ export function Signup() {
       ) : (
         <Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
+          {activeStep === 0 && <FormUserBasicInfo />}
+          {activeStep === 1 && <FormUserOptionalInfo />}
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Button
               color="inherit"

@@ -5,7 +5,7 @@ interface ISignInRequestData {
   password: string;
 }
 
-interface ISignInResponse {
+export interface ISignInResponse {
   accessToken: string;
   refreshToken: string;
 }

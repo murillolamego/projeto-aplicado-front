@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.16",
     "@types/node": "18.15.11",
     "@types/react": "18.0.32",
@@ -20,6 +21,7 @@
     "jwt-decode": "^3.1.2",
     "next": "13.2.4",
     "nookies": "^2.5.2",
+    "notistack": "^3.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.43.9",
