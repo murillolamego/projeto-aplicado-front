@@ -1,5 +1,5 @@
 import type { AppProps } from "next/app";
-import { closeSnackbar, SnackbarProvider } from "notistack";
+import { SnackbarProvider } from "notistack";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 

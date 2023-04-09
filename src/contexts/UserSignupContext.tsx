@@ -4,9 +4,9 @@ import {
   getCountriesAndStates,
   ICountry,
   IState,
-} from "@/services/geolocation";
+} from "@/services/geolocationService";
 
-interface IUser {
+export interface IUser {
   name: string;
   email: string;
   password: string;

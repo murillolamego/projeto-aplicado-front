@@ -1,6 +1,8 @@
-import { useState, Fragment } from "react";
-import { useForm } from "react-hook-form";
+import { enqueueSnackbar } from "notistack";
+import { useState, Fragment, ReactElement, useContext } from "react";
 
+import { UserSignupContext } from "@/contexts/UserSignupContext";
+import { signUp } from "@/services/userService";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Step from "@mui/material/Step";
@@ -9,24 +11,25 @@ import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 
 import { FormUserBasicInfo } from "./forms/formUserBasicInfo";
-import { FormUserOptionalInfo } from "./forms/formUserOptionalInfo";
+import { FormUserConfirmInfo } from "./forms/formUserConfirmInfo";
+import { FormUserMoreInfo } from "./forms/formUserMoreInfo";
 
-const steps = ["User 1", "User 2", "User 3"];
+const steps = ["User 1", "User 2"];
 
-export function SignupUser() {
+export function SignupUser(): ReactElement {
+  const { user } = useContext(UserSignupContext);
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
-  const { register, handleSubmit } = useForm<ISignInData>();
 
-  const isStepOptional = (step: number) => {
+  const isStepOptional = (step: number): boolean => {
     return false;
   };
 
-  const isStepSkipped = (step: number) => {
+  const isStepSkipped = (step: number): boolean => {
     return skipped.has(step);
   };
 
-  const handleNext = () => {
+  const handleNext = (): void => {
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
@@ -37,14 +40,12 @@ export function SignupUser() {
     setSkipped(newSkipped);
   };
 
-  const handleBack = () => {
+  const handleBack = (): void => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleSkip = () => {
+  const handleSkip = (): void => {
     if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
       throw new Error("You can't skip a step that isn't optional.");
     }
 
@@ -56,17 +57,27 @@ export function SignupUser() {
     });
   };
 
-  const handleReset = () => {
+  const handleReset = (): void => {
     setActiveStep(0);
   };
 
-  const signUp = (data) => {
-    console.log(data);
-  };
+  const handleSignup = async (): Promise<void> => {
+    console.log("SIGN UP");
+    const data = await signUp(user);
 
-  async function handleSignUp(data): Promise<void> {
-    await signUp(data);
-  }
+    if (data) {
+      console.log("CREATED USER", user);
+      enqueueSnackbar({
+        message: "User successfully created",
+        variant: "success",
+      });
+    } else {
+      enqueueSnackbar({
+        message: "User creation failed",
+        variant: "error",
+      });
+    }
+  };
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -93,19 +104,27 @@ export function SignupUser() {
       </Stepper>
       {activeStep === steps.length ? (
         <Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            All steps completed - you&apos;re finished
-          </Typography>
+          <FormUserConfirmInfo />
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+            <Button
+              color="inherit"
+              disabled={activeStep === 0}
+              onClick={handleReset}
+              sx={{ mr: 1 }}
+            >
+              Reset
+            </Button>
             <Box sx={{ flex: "1 1 auto" }} />
-            <Button onClick={handleReset}>Reset</Button>
+            <Button onClick={handleSignup} sx={{ mr: 1 }}>
+              Sign up
+            </Button>
           </Box>
         </Fragment>
       ) : (
         <Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
           {activeStep === 0 && <FormUserBasicInfo />}
-          {activeStep === 1 && <FormUserOptionalInfo />}
+          {activeStep === 1 && <FormUserMoreInfo />}
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Button
               color="inherit"
@@ -121,9 +140,7 @@ export function SignupUser() {
                 Skip
               </Button>
             )}
-            <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
+            <Button onClick={handleNext}>Next</Button>
           </Box>
         </Fragment>
       )}

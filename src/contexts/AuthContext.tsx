@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { setCookie, parseCookies } from "nookies";
 import { createContext, ReactElement, useEffect, useState } from "react";
 
-import { refreshRequest, signInRequest } from "@/services/auth";
+import { refreshRequest, signInRequest } from "@/services/authService";
 
 interface IUser {
   sub: string;

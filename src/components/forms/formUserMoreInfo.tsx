@@ -5,7 +5,7 @@ import { UserSignupContext } from "@/contexts/UserSignupContext";
 import {
   getCitiesByCountry,
   getCitiesByCountryAndState,
-} from "@/services/geolocation";
+} from "@/services/geolocationService";
 import { PhotoCamera } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -19,8 +19,8 @@ import {
 
 const IMAGE_TYPE = /image\/(png|jpg|jpeg)/i;
 
-export function FormUserOptionalInfo(): ReactElement {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+export function FormUserMoreInfo(): ReactElement {
+  const { enqueueSnackbar } = useSnackbar();
   const {
     user,
     setUser,
@@ -168,7 +168,7 @@ export function FormUserOptionalInfo(): ReactElement {
         <IconButton
           className="absolute start-0 bottom-0"
           color="primary"
-          aria-label="upload picture"
+          aria-label="upload avatar"
           component="label"
         >
           <input
@@ -187,7 +187,7 @@ export function FormUserOptionalInfo(): ReactElement {
         <IconButton
           className="absolute end-0 bottom-0"
           color="primary"
-          aria-label="delete picture"
+          aria-label="delete avatar"
           component="label"
           onClick={(): void => {
             setUser({ ...user, avatar: "" });
@@ -201,13 +201,6 @@ export function FormUserOptionalInfo(): ReactElement {
       <Typography sx={{ mt: 2, mb: 1, fontSize: 40, fontWeight: "bold" }}>
         {user?.name && user.name}
       </Typography>
-      <TextField
-        type="tel"
-        label="Phone"
-        placeholder="Phone"
-        value={user?.phone && user.phone}
-        onChange={(e): void => setUser({ ...user, phone: e.target.value })}
-      />
       <Box
         component="div"
         sx={{
