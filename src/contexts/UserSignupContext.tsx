@@ -26,6 +26,8 @@ interface IUserSignupContext {
   setStates: (data: IState[]) => void;
   cities: string[];
   setCities: (data: string[]) => void;
+  file: File | null;
+  setFile: (data: File) => void;
 }
 
 interface IProps {
@@ -46,6 +48,7 @@ export function UserSignupProvider({ children }: IProps): ReactElement {
   const [countries, setCountries] = useState<ICountry[]>([]);
   const [states, setStates] = useState<IState[]>([]);
   const [cities, setCities] = useState<string[]>([]);
+  const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
     console.log("#### USER SIGNUP CONTEXT #### USE EFFECT");
@@ -71,6 +74,8 @@ export function UserSignupProvider({ children }: IProps): ReactElement {
         setStates,
         cities,
         setCities,
+        file,
+        setFile,
       }}
     >
       {children}

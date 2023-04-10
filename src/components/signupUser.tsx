@@ -17,7 +17,7 @@ import { FormUserMoreInfo } from "./forms/formUserMoreInfo";
 const steps = ["User 1", "User 2"];
 
 export function SignupUser(): ReactElement {
-  const { user } = useContext(UserSignupContext);
+  const { user, file } = useContext(UserSignupContext);
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
 
@@ -63,7 +63,7 @@ export function SignupUser(): ReactElement {
 
   const handleSignup = async (): Promise<void> => {
     console.log("SIGN UP");
-    const data = await signUp(user);
+    const data = await signUp(user, file);
 
     if (data) {
       console.log("CREATED USER", user);

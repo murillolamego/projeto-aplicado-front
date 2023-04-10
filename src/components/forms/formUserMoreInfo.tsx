@@ -30,8 +30,8 @@ export function FormUserMoreInfo(): ReactElement {
     setStates,
     cities,
     setCities,
+    setFile,
   } = useContext(UserSignupContext);
-  const [file, setFile] = useState<File | null>(null);
 
   const fileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
