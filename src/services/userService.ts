@@ -12,7 +12,7 @@ export async function signUp(
   data.append("name", name);
   data.append("password", password);
   if (avatar) {
-    data.append("avatar", avatar);
+    data.append("file", avatar);
   }
   if (city) {
     data.append("city", city);

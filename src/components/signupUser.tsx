@@ -1,7 +1,9 @@
 import { enqueueSnackbar } from "notistack";
 import { useState, Fragment, ReactElement, useContext } from "react";
 
+import { AuthContext } from "@/contexts/AuthContext";
 import { UserSignupContext } from "@/contexts/UserSignupContext";
+import { signInRequest } from "@/services/authService";
 import { signUp } from "@/services/userService";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -20,6 +22,8 @@ export function SignupUser(): ReactElement {
   const { user, file } = useContext(UserSignupContext);
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set<number>());
+
+  const { signIn } = useContext(AuthContext);
 
   const isStepOptional = (step: number): boolean => {
     return false;
@@ -71,6 +75,7 @@ export function SignupUser(): ReactElement {
         message: "User successfully created",
         variant: "success",
       });
+      await signIn({ email: user.email, password: user.password });
     } else {
       enqueueSnackbar({
         message: "User creation failed",
