@@ -4,11 +4,19 @@ import { setCookie, parseCookies } from "nookies";
 import { createContext, ReactElement, useEffect, useState } from "react";
 
 import { refreshRequest, signInRequest } from "@/services/authService";
+import { IPet } from "@/services/petService";
 
 interface IUser {
   sub: string;
   email: string;
   exp: number;
+  addressId: string;
+  avatar?: string;
+  createdAt: string;
+  enabled: boolean;
+  name: string;
+  phone?: string;
+  pets?: IPet[];
 }
 
 export interface ISignInData {
@@ -18,6 +26,7 @@ export interface ISignInData {
 interface IAuthContext {
   isAuthenticated: boolean;
   user: IUser | null;
+  setUser: (data: IUser) => void;
   signIn: (data: ISignInData) => Promise<void>;
 }
 
@@ -29,31 +38,19 @@ export const AuthContext = createContext({} as IAuthContext);
 
 export function AuthProvider({ children }: IProps): ReactElement {
   const [user, setUser] = useState<IUser | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!user);
 
   const router = useRouter();
 
-  const isAuthenticated = !!user;
-
   async function validateToken(currentAccessToken: string): Promise<void> {
-    console.log("VALIDATE TOKEN");
-
     const user = jwt_decode<IUser>(currentAccessToken);
 
     const expirationTime = user?.exp * 1000; // timestamp
 
-    console.log("EXP TIME", expirationTime);
-
     const now = new Date().getTime();
 
-    console.log("NOW", now);
-
-    console.log("NOW > EXP TIME", now > expirationTime);
-
     if (expirationTime && now > expirationTime) {
-      console.log("SHOULD REFRESH TOKEN");
       const { "projeto-aplicado-refreshtoken": token } = parseCookies();
-
-      console.log("REFRESH TOKEN", token);
 
       await (async (): Promise<void> => {
         const data = await refreshRequest(token);
@@ -80,38 +77,27 @@ export function AuthProvider({ children }: IProps): ReactElement {
           const user = jwt_decode<IUser>(data.accessToken);
 
           setUser(user);
-
-          console.log("UPDATED USER", user);
           return;
         }
       })();
     } else {
-      console.log("TOKEN IS VALID");
       setUser(user);
-
-      console.log("UPDATED USER 2", user);
     }
   }
 
   useEffect(() => {
-    console.log("USE EFFECT");
     const { "projeto-aplicado-accesstoken": currentAccessToken } =
       parseCookies();
-    console.log("CURRENT TOKEN", currentAccessToken);
     if (!currentAccessToken) {
-      console.log("NOT LOGGED IN");
       return;
     }
-    console.log("ALREADY LOGGED IN");
 
     (async (): Promise<void> => {
-      console.log("SHOULD VALIDATE TOKEN");
       await validateToken(currentAccessToken);
     })();
   }, []);
 
   async function signIn({ email, password }: ISignInData): Promise<void> {
-    console.log("SIGN IN");
     const data = await signInRequest({
       email,
       password,
@@ -130,14 +116,12 @@ export function AuthProvider({ children }: IProps): ReactElement {
 
       setUser(user);
 
-      console.log("USER", user);
-
-      router.push("/dashboard");
+      router.push("/user");
     }
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
+    <AuthContext.Provider value={{ user, setUser, isAuthenticated, signIn }}>
       {children}
     </AuthContext.Provider>
   );

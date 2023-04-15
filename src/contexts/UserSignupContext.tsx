@@ -51,7 +51,6 @@ export function UserSignupProvider({ children }: IProps): ReactElement {
   const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
-    console.log("#### USER SIGNUP CONTEXT #### USE EFFECT");
     if (countries.length === 0) {
       (async (): Promise<void> => {
         const countries = await getCountriesAndStates();
@@ -61,7 +60,7 @@ export function UserSignupProvider({ children }: IProps): ReactElement {
         }
       })();
     }
-  }, [countries.length, setCountries]);
+  }, [countries, setCountries]);
 
   return (
     <UserSignupContext.Provider
