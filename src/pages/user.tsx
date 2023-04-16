@@ -24,10 +24,13 @@ import {
   FormControl,
   IconButton,
   InputLabel,
+  List,
+  ListItem,
   MenuItem,
   Modal,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -165,33 +168,35 @@ export default function Dashboard(): ReactElement {
       </Head>
       <main className="flex items-center justify-center w-screen h-screen">
         <div className="container flex items-center justify-center">
-          <div>
+          <div className="flex flex-row flex-wrap flex-auto">
             <>
-              <Avatar
-                className="object-contain border-gray-400"
-                alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
-                src={
-                  user?.avatar &&
-                  `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${user?.avatar}`
-                }
-                sx={{
-                  width: 180,
-                  height: 180,
-                  fontSize: 120,
-                  objectFit: "contain",
-                }}
-              />
-              <h1 className="font-bold text-4xl">{user?.name}</h1>
-              <h2>Pets</h2>
-              <IconButton
-                color="primary"
-                aria-label="upload picture"
-                component="label"
-                onClick={handleOpen}
-              >
-                <AddCircleOutlineIcon />
-              </IconButton>
-              <ul>
+              <div>
+                <Avatar
+                  className="object-contain border-2 border-orange-500"
+                  alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
+                  src={
+                    user?.avatar &&
+                    `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${user?.avatar}`
+                  }
+                  sx={{
+                    width: 180,
+                    height: 180,
+                    fontSize: 120,
+                    objectFit: "contain",
+                  }}
+                />
+                <h1 className="font-bold text-4xl">{user?.name}</h1>
+                <h2>Pets</h2>
+                <IconButton
+                  color="primary"
+                  aria-label="upload picture"
+                  component="label"
+                  onClick={handleOpen}
+                >
+                  <AddCircleOutlineIcon />
+                </IconButton>
+              </div>
+              <List className="flex flex-wrap justify-start ">
                 {user &&
                   user.pets &&
                   user.pets.map((pet, index) => (
@@ -199,14 +204,20 @@ export default function Dashboard(): ReactElement {
                       {(index === 0 ||
                         pet.Category?.id !=
                           user?.pets[index - 1].Category?.id) && (
-                        <h3 className="bg-slate-400" key={pet.Category?.id}>
-                          {pet.Category?.name}
-                        </h3>
+                        <ListItem>
+                          <Typography
+                            variant="h4"
+                            className=" capitalize"
+                            key={pet.Category?.id}
+                          >
+                            {pet.Category?.name}
+                          </Typography>
+                        </ListItem>
                       )}
-                      <li className="flex items-center">
+                      <ListItem className="w-fit">
                         <Link href={`/pet/${pet.username}`}>
                           <Avatar
-                            className="object-contain border-gray-400"
+                            className="object-contain border-2 border-orange-500"
                             alt={
                               pet?.name ? `${pet.name}'s avatar` : "User avatar"
                             }
@@ -215,19 +226,21 @@ export default function Dashboard(): ReactElement {
                               `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${pet?.avatar}`
                             }
                             sx={{
-                              width: 40,
-                              height: 40,
-                              fontSize: 40,
+                              width: 80,
+                              height: 80,
+                              fontSize: 80,
                               objectFit: "contain",
                               cursor: "pointer",
                             }}
                           />
-                          {pet.name}
+                          <Typography variant="h6" className="text-center">
+                            {pet.name}
+                          </Typography>
                         </Link>
-                      </li>
+                      </ListItem>
                     </Fragment>
                   ))}
-              </ul>
+              </List>
             </>
             <Modal
               open={openCreatePet}
@@ -384,7 +397,61 @@ export default function Dashboard(): ReactElement {
               </Box>
             </Modal>
           </div>
-          <div>Feed</div>
+          <div className="flex-auto">
+            <div className="flex p-3 border-b-2 border-b-orange-500">
+              <Avatar
+                className="object-contain border-2 border-orange-500"
+                alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
+                src={
+                  user?.avatar &&
+                  `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${user?.avatar}`
+                }
+                sx={{
+                  width: 80,
+                  height: 80,
+                  fontSize: 80,
+                  objectFit: "contain",
+                }}
+              />
+              <div className="flex px-3 flex-wrap">
+                <Typography variant="h6">{user?.name}</Typography>
+                <Typography variant="body1">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Aliquam mattis, ante vel pretium vulputate, ligula ipsum
+                  eleifend augue, vel sagittis eros risus a felis. Morbi pretium
+                  tincidunt lacinia.
+                </Typography>
+              </div>
+            </div>
+            <div className="flex p-3 border-b-2 border-b-orange-500">
+              <Avatar
+                className="object-contain border-2 border-orange-500"
+                alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
+                src={
+                  user?.avatar &&
+                  `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${user?.avatar}`
+                }
+                sx={{
+                  width: 80,
+                  height: 80,
+                  fontSize: 80,
+                  objectFit: "contain",
+                }}
+              />
+              <div className="flex px-3 flex-wrap">
+                <Typography variant="h6">{user?.name}</Typography>
+                <Typography variant="body1">
+                  orem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Vestibulum fringilla nunc nec augue ultrices scelerisque. Nam
+                  nec sem ac urna finibus venenatis a ut odio. Nulla facilisi.
+                  Etiam nunc libero, sodales ac tincidunt tempus, blandit vitae
+                  lacus. Sed ut finibus nibh. Curabitur non pharetra nisl.
+                  Quisque rhoncus turpis venenatis, lacinia nulla a, volutpat
+                  nunc.
+                </Typography>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </>
