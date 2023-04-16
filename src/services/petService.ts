@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import { IUser } from "@/contexts/UserSignupContext";
+
 import { IPetBreed } from "./petBreedService";
 import { IPetCategory } from "./petCategoryService";
 
@@ -14,6 +16,7 @@ export interface IPet {
   breedId: string;
   Breed?: IPetBreed;
   guardianId: string;
+  Guardian?: IUser;
 }
 
 export async function addPet(
@@ -41,6 +44,30 @@ export async function addPet(
           "Content-Type": "multipart/form-data",
         },
       },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function findAllPets(): Promise<IPet[] | undefined> {
+  try {
+    const response = await axios.get<IPet[]>(
+      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/pets`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function findAllPetsWithRelations(): Promise<IPet[] | undefined> {
+  try {
+    const response = await axios.get<IPet[]>(
+      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/pets/relations`,
     );
 
     return response.data;

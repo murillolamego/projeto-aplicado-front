@@ -166,13 +166,13 @@ export default function Dashboard(): ReactElement {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex items-center justify-center w-screen h-screen">
-        <div className="container flex items-center justify-center">
-          <div className="flex flex-row flex-wrap flex-auto">
+      <main className="flex p-0 justify-center w-screen h-screen">
+        <div className="container xl:max-w-screen-xl p-0 flex">
+          <div className="flex flex-col h-screen items-start border-r border-r-orange-400">
             <>
-              <div>
+              <div className="py-2">
                 <Avatar
-                  className="object-contain border-2 border-orange-500"
+                  className="mx-auto object-contain border border-orange-400"
                   alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
                   src={
                     user?.avatar &&
@@ -185,7 +185,14 @@ export default function Dashboard(): ReactElement {
                     objectFit: "contain",
                   }}
                 />
-                <h1 className="font-bold text-4xl">{user?.name}</h1>
+                <Typography variant="h4" className="text-center font-bold">
+                  {user?.name}
+                </Typography>
+                <Typography variant="h6" className="text-center font-bold">
+                  @{user?.username}
+                </Typography>
+              </div>
+              <List className="flex flex-wrap justify-start items-start h-max">
                 <h2>Pets</h2>
                 <IconButton
                   color="primary"
@@ -195,8 +202,6 @@ export default function Dashboard(): ReactElement {
                 >
                   <AddCircleOutlineIcon />
                 </IconButton>
-              </div>
-              <List className="flex flex-wrap justify-start ">
                 {user &&
                   user.pets &&
                   user.pets.map((pet, index) => (
@@ -206,7 +211,7 @@ export default function Dashboard(): ReactElement {
                           user?.pets[index - 1].Category?.id) && (
                         <ListItem>
                           <Typography
-                            variant="h4"
+                            variant="h5"
                             className=" capitalize"
                             key={pet.Category?.id}
                           >
@@ -214,10 +219,10 @@ export default function Dashboard(): ReactElement {
                           </Typography>
                         </ListItem>
                       )}
-                      <ListItem className="w-fit">
+                      <ListItem className="w-fit p-1">
                         <Link href={`/pet/${pet.username}`}>
                           <Avatar
-                            className="object-contain border-2 border-orange-500"
+                            className="object-contain border border-orange-400"
                             alt={
                               pet?.name ? `${pet.name}'s avatar` : "User avatar"
                             }
@@ -263,7 +268,7 @@ export default function Dashboard(): ReactElement {
                 <div className="relative w-fit mx-auto">
                   <label htmlFor="inputFile">
                     <Avatar
-                      className="object-contain border-gray-400"
+                      className="object-contain border border-orange-400"
                       alt={pet?.name ? `${pet.name}'s avatar` : "User avatar"}
                       src={pet?.avatar}
                       sx={{
@@ -397,10 +402,10 @@ export default function Dashboard(): ReactElement {
               </Box>
             </Modal>
           </div>
-          <div className="flex-auto">
-            <div className="flex p-3 border-b-2 border-b-orange-500">
+          <List className="flex-auto h-max">
+            <ListItem className="flex p-3 items-start border-b border-b-orange-400">
               <Avatar
-                className="object-contain border-2 border-orange-500"
+                className="object-contain border border-orange-400"
                 alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
                 src={
                   user?.avatar &&
@@ -413,7 +418,7 @@ export default function Dashboard(): ReactElement {
                   objectFit: "contain",
                 }}
               />
-              <div className="flex px-3 flex-wrap">
+              <div className="flex px-3 items-start flex-wrap">
                 <Typography variant="h6">{user?.name}</Typography>
                 <Typography variant="body1">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -422,10 +427,10 @@ export default function Dashboard(): ReactElement {
                   tincidunt lacinia.
                 </Typography>
               </div>
-            </div>
-            <div className="flex p-3 border-b-2 border-b-orange-500">
+            </ListItem>
+            <ListItem className="flex p-3 items-start border-b border-b-orange-400">
               <Avatar
-                className="object-contain border-2 border-orange-500"
+                className="object-contain border border-orange-400"
                 alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
                 src={
                   user?.avatar &&
@@ -438,7 +443,7 @@ export default function Dashboard(): ReactElement {
                   objectFit: "contain",
                 }}
               />
-              <div className="flex px-3 flex-wrap">
+              <div className="flex px-3 items-start flex-wrap">
                 <Typography variant="h6">{user?.name}</Typography>
                 <Typography variant="body1">
                   orem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -450,8 +455,8 @@ export default function Dashboard(): ReactElement {
                   nunc.
                 </Typography>
               </div>
-            </div>
-          </div>
+            </ListItem>
+          </List>
         </div>
       </main>
     </>
