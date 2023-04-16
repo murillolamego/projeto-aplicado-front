@@ -1,5 +1,5 @@
 import { useSnackbar } from "notistack";
-import React, { ReactElement, useContext, useEffect, useState } from "react";
+import React, { ReactElement, useContext, useEffect } from "react";
 
 import { UserSignupContext } from "@/contexts/UserSignupContext";
 import {
@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const IMAGE_TYPE = /image\/(png|jpg|jpeg)/i;
+export const IMAGE_TYPE = /image\/(png|jpg|jpeg)/i;
 
 export function FormUserMoreInfo(): ReactElement {
   const { enqueueSnackbar } = useSnackbar();
@@ -192,7 +192,6 @@ export function FormUserMoreInfo(): ReactElement {
           onClick={(): void => {
             setUser({ ...user, avatar: "" });
             setFile(null);
-            console.log("USER", user);
           }}
         >
           <DeleteIcon sx={{ fontSize: 32 }} />

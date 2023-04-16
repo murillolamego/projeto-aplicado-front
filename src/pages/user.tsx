@@ -1,24 +1,98 @@
+import dayjs from "dayjs";
 import Head from "next/head";
 import Link from "next/link";
+import { useSnackbar } from "notistack";
 import { ReactElement, useContext, useEffect, useState, Fragment } from "react";
 
+import { IMAGE_TYPE } from "@/components/forms/formUserMoreInfo";
 import { AuthContext } from "@/contexts/AuthContext";
 import { IUser } from "@/contexts/UserSignupContext";
+import { findAllByCategory, IPetBreed } from "@/services/petBreedService";
+import {
+  findAllPetCategories,
+  IPetCategory,
+} from "@/services/petCategoryService";
 import { IPet } from "@/services/petService";
 import { findUserById, getUserPets } from "@/services/userService";
+import { PhotoCamera } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { Avatar, Box, IconButton, Modal, TextField } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Avatar,
+  Box,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Modal,
+  Select,
+  TextField,
+} from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export default function Dashboard(): ReactElement {
   const { user, setUser } = useContext(AuthContext);
 
   const [pets, setPets] = useState<IPet[]>([]);
 
-  const [pet, setPet] = useState<IPet | null>(null);
+  const [pet, setPet] = useState<IPet>({
+    username: "",
+    name: "",
+    birthdate: "",
+    avatar: "",
+    categoryId: "",
+    breedId: "",
+  });
+
+  const [petCategories, setPetCategories] = useState<IPetCategory[]>([]);
+
+  const [petBreeds, setPetBreeds] = useState<IPetBreed[]>([]);
+
+  const [file, setFile] = useState<File | null>(null);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const [openCreatePet, setOpenCreatePet] = useState(false);
   const handleOpen = (): void => setOpenCreatePet(true);
   const handleClose = (): void => setOpenCreatePet(false);
+
+  const fileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      if (!file?.type.match(IMAGE_TYPE)) {
+        enqueueSnackbar({
+          message: "Image type not supported",
+          variant: "error",
+        });
+        return;
+      }
+      setFile(file);
+
+      let fileReader: FileReader;
+      let isCancel = false;
+      if (file) {
+        fileReader = new FileReader();
+        fileReader.onload = (e) => {
+          const { result } = e.target;
+          if (result && !isCancel) {
+            setPet({ ...pet, avatar: result });
+            enqueueSnackbar({
+              message: "Looks great!",
+              variant: "success",
+            });
+          }
+        };
+        fileReader.readAsDataURL(file);
+      }
+      return () => {
+        isCancel = true;
+        if (fileReader && fileReader.readyState === 1) {
+          fileReader.abort();
+        }
+      };
+    }
+  };
 
   useEffect(() => {
     (async (): Promise<void> => {
@@ -30,7 +104,7 @@ export default function Dashboard(): ReactElement {
         }
       }
 
-      if (user && pets.length === 0) {
+      if (user && !user.pets) {
         const pets = await getUserPets(user?.sub);
 
         if (pets) {
@@ -40,8 +114,24 @@ export default function Dashboard(): ReactElement {
         }
         console.log("USER with pets", user);
       }
+
+      if (petCategories.length === 0) {
+        const petCategories = await findAllPetCategories();
+
+        if (petCategories) {
+          setPetCategories(petCategories);
+        }
+      }
+
+      if (pet.categoryId && petBreeds.length === 0) {
+        const petBreeds = await findAllByCategory(pet.categoryId);
+
+        if (petBreeds) {
+          setPetBreeds(petBreeds);
+        }
+      }
     })();
-  }, [user, setUser, pets]);
+  }, [user, setUser, pet, pets, petCategories, petBreeds]);
 
   return (
     <>
@@ -83,9 +173,9 @@ export default function Dashboard(): ReactElement {
                 {pets.map((pet, index) => (
                   <Fragment key={pet.id}>
                     {(index === 0 ||
-                      pet.Category.id != pets[index - 1].Category.id) && (
-                      <h3 className="bg-slate-400" key={pet.Category.id}>
-                        {pet.Category.name}
+                      pet.Category?.id != pets[index - 1].Category?.id) && (
+                      <h3 className="bg-slate-400" key={pet.Category?.id}>
+                        {pet.Category?.name}
                       </h3>
                     )}
                     <li className="flex items-center">
@@ -130,17 +220,138 @@ export default function Dashboard(): ReactElement {
                 }}
                 noValidate
                 autoComplete="off"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-md p-8 flex-row items-center"
               >
+                <div className="relative w-fit mx-auto">
+                  <label htmlFor="inputFile">
+                    <Avatar
+                      className="object-contain border-gray-400"
+                      alt={pet?.name ? `${pet.name}'s avatar` : "User avatar"}
+                      src={pet?.avatar}
+                      sx={{
+                        width: 180,
+                        height: 180,
+                        fontSize: 120,
+                        objectFit: "contain",
+                        cursor: "pointer",
+                      }}
+                    />
+                  </label>
+                  <IconButton
+                    className="absolute start-0 bottom-0"
+                    color="primary"
+                    aria-label="upload avatar"
+                    component="label"
+                  >
+                    <input
+                      hidden
+                      id="inputFile"
+                      name="inputFile"
+                      accept="image/*"
+                      type="file"
+                      onChange={(e): void => {
+                        fileHandler(e);
+                        e.target.value = "";
+                      }}
+                    />
+                    <PhotoCamera sx={{ fontSize: 32 }} />
+                  </IconButton>
+                  <IconButton
+                    className="absolute end-0 bottom-0"
+                    color="primary"
+                    aria-label="delete avatar"
+                    component="label"
+                    onClick={(): void => {
+                      setPet({ ...pet, avatar: "" });
+                      setFile(null);
+                    }}
+                  >
+                    <DeleteIcon sx={{ fontSize: 32 }} />
+                  </IconButton>
+                </div>
                 <TextField
                   required
                   type="text"
-                  label="Name"
-                  placeholder="Your name"
+                  label="Pet's name"
+                  placeholder="Pet's name"
                   value={pet?.username && pet.username}
                   onChange={(e): void =>
                     setPet({ ...pet, username: e.target.value })
                   }
                 />
+                <TextField
+                  required
+                  type="text"
+                  label="Username"
+                  placeholder="Pet's username"
+                  value={pet?.username && pet.username}
+                  onChange={(e): void =>
+                    setPet({ ...pet, username: e.target.value })
+                  }
+                />
+
+                <FormControl required sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="demo-simple-select-required-label">
+                    Category
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-required-label"
+                    id="demo-simple-select-required"
+                    label="Category *"
+                    disabled={petCategories.length < 1}
+                    value={pet.categoryId || ""}
+                    onChange={(e): void => {
+                      setPetBreeds([]);
+                      setPet({
+                        ...pet,
+                        categoryId: e.target.value,
+                        breedId: "",
+                      });
+                    }}
+                  >
+                    {petCategories.map((petCategory) => (
+                      <MenuItem key={petCategory.id} value={petCategory.id}>
+                        {petCategory.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl required sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="demo-simple-select-required-label">
+                    Breed
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-required-label"
+                    id="demo-simple-select-required"
+                    label="Category *"
+                    disabled={petBreeds.length < 1}
+                    value={pet.breedId || ""}
+                    onChange={(e): void =>
+                      setPet({ ...pet, breedId: e.target.value })
+                    }
+                  >
+                    {petBreeds.map((petBreed) => (
+                      <MenuItem key={petBreed.id} value={petBreed.id}>
+                        {petBreed.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Pet's birthday"
+                    format="DD/MM/YYYY"
+                    onChange={(birthdate): void => {
+                      setPet({
+                        ...pet,
+                        birthdate: dayjs(birthdate as string).toString(),
+                      });
+                      console.log("PET AGE", pet.birthdate);
+                    }}
+                  />
+                </LocalizationProvider>
               </Box>
             </Modal>
           </div>

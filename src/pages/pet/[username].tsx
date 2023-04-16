@@ -34,8 +34,8 @@ export default function Dashboard(): ReactElement {
       </Head>
       <main className="flex items-center justify-center w-screen h-screen">
         <h1>PET {username}</h1>
-        <h2>Breed: {pet?.Breed.name}</h2>
-        <h2>Category: {pet?.Category.name}</h2>
+        <h2>Breed: {pet?.Breed?.name}</h2>
+        <h2>Category: {pet?.Category?.name}</h2>
       </main>
     </>
   );
