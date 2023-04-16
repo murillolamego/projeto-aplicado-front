@@ -13,10 +13,11 @@ export interface IPet {
   Category?: IPetCategory;
   breedId: string;
   Breed?: IPetBreed;
+  guardianId: string;
 }
 
 export async function addPet(
-  { username, name, birthdate, categoryId, breedId }: IPet,
+  { username, name, birthdate, categoryId, breedId, guardianId }: IPet,
   avatar: File,
 ): Promise<IPet | undefined> {
   const data = new FormData();
@@ -24,11 +25,12 @@ export async function addPet(
   data.append("username", username);
   data.append("name", name);
   data.append("birthdate", birthdate);
+  data.append("categoryId", categoryId);
+  data.append("breedId", breedId);
+  data.append("guardianId", guardianId);
   if (avatar) {
     data.append("file", avatar);
   }
-  data.append("categoryId", categoryId);
-  data.append("breedId", breedId);
 
   try {
     const response = await axios.post<IPet>(

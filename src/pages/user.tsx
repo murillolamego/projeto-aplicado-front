@@ -12,7 +12,7 @@ import {
   findAllPetCategories,
   IPetCategory,
 } from "@/services/petCategoryService";
-import { IPet } from "@/services/petService";
+import { addPet, IPet } from "@/services/petService";
 import { findUserById, getUserPets } from "@/services/userService";
 import { PhotoCamera } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -20,6 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Avatar,
   Box,
+  Button,
   FormControl,
   IconButton,
   InputLabel,
@@ -43,6 +44,7 @@ export default function Dashboard(): ReactElement {
     avatar: "",
     categoryId: "",
     breedId: "",
+    guardianId: "",
   });
 
   const [petCategories, setPetCategories] = useState<IPetCategory[]>([]);
@@ -56,6 +58,25 @@ export default function Dashboard(): ReactElement {
   const [openCreatePet, setOpenCreatePet] = useState(false);
   const handleOpen = (): void => setOpenCreatePet(true);
   const handleClose = (): void => setOpenCreatePet(false);
+
+  const handleAddPet = async (): Promise<void> => {
+    console.log("ADD PET");
+    const data = await addPet(pet, file);
+
+    if (data) {
+      console.log("CREATED USER", user);
+      enqueueSnackbar({
+        message: "Pet successfully added",
+        variant: "success",
+      });
+      handleClose();
+    } else {
+      enqueueSnackbar({
+        message: "Failed to add pet",
+        variant: "error",
+      });
+    }
+  };
 
   const fileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -97,6 +118,7 @@ export default function Dashboard(): ReactElement {
   useEffect(() => {
     (async (): Promise<void> => {
       if (user && !user?.name) {
+        setPet({ ...pet, guardianId: user.sub });
         const updatedUser: IUser | undefined = await findUserById(user?.sub);
 
         if (updatedUser) {
@@ -170,38 +192,41 @@ export default function Dashboard(): ReactElement {
                 <AddCircleOutlineIcon />
               </IconButton>
               <ul>
-                {pets.map((pet, index) => (
-                  <Fragment key={pet.id}>
-                    {(index === 0 ||
-                      pet.Category?.id != pets[index - 1].Category?.id) && (
-                      <h3 className="bg-slate-400" key={pet.Category?.id}>
-                        {pet.Category?.name}
-                      </h3>
-                    )}
-                    <li className="flex items-center">
-                      <Link href={`/pet/${pet.username}`}>
-                        <Avatar
-                          className="object-contain border-gray-400"
-                          alt={
-                            user?.name ? `${user.name}'s avatar` : "User avatar"
-                          }
-                          src={
-                            user?.avatar &&
-                            `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${user?.avatar}`
-                          }
-                          sx={{
-                            width: 40,
-                            height: 40,
-                            fontSize: 40,
-                            objectFit: "contain",
-                            cursor: "pointer",
-                          }}
-                        />
-                        {pet.name}
-                      </Link>
-                    </li>
-                  </Fragment>
-                ))}
+                {user &&
+                  user.pets &&
+                  user.pets.map((pet, index) => (
+                    <Fragment key={pet.id}>
+                      {(index === 0 ||
+                        pet.Category?.id !=
+                          user?.pets[index - 1].Category?.id) && (
+                        <h3 className="bg-slate-400" key={pet.Category?.id}>
+                          {pet.Category?.name}
+                        </h3>
+                      )}
+                      <li className="flex items-center">
+                        <Link href={`/pet/${pet.username}`}>
+                          <Avatar
+                            className="object-contain border-gray-400"
+                            alt={
+                              pet?.name ? `${pet.name}'s avatar` : "User avatar"
+                            }
+                            src={
+                              pet?.avatar &&
+                              `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${pet?.avatar}`
+                            }
+                            sx={{
+                              width: 40,
+                              height: 40,
+                              fontSize: 40,
+                              objectFit: "contain",
+                              cursor: "pointer",
+                            }}
+                          />
+                          {pet.name}
+                        </Link>
+                      </li>
+                    </Fragment>
+                  ))}
               </ul>
             </>
             <Modal
@@ -284,9 +309,9 @@ export default function Dashboard(): ReactElement {
                   type="text"
                   label="Username"
                   placeholder="Pet's username"
-                  value={pet?.username && pet.username}
+                  value={pet?.name && pet.name}
                   onChange={(e): void =>
-                    setPet({ ...pet, username: e.target.value })
+                    setPet({ ...pet, name: e.target.value })
                   }
                 />
 
@@ -352,6 +377,10 @@ export default function Dashboard(): ReactElement {
                     }}
                   />
                 </LocalizationProvider>
+
+                <Button onClick={handleAddPet} sx={{ mr: 1 }}>
+                  Sign up
+                </Button>
               </Box>
             </Modal>
           </div>
