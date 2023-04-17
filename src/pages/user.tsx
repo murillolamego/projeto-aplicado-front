@@ -7,7 +7,7 @@ import { ReactElement, useContext, useEffect, useState, Fragment } from "react";
 import { IMAGE_TYPE } from "@/components/forms/formUserMoreInfo";
 import { AuthContext } from "@/contexts/AuthContext";
 import { IUser } from "@/contexts/UserSignupContext";
-import { findAllByCategory, IPetBreed } from "@/services/petBreedService";
+import { findAllBreedsByCategory, IPetBreed } from "@/services/petBreedService";
 import {
   findAllPetCategories,
   IPetCategory,
@@ -149,7 +149,7 @@ export default function Dashboard(): ReactElement {
       }
 
       if (pet.categoryId && petBreeds.length === 0) {
-        const petBreeds = await findAllByCategory(pet.categoryId);
+        const petBreeds = await findAllBreedsByCategory(pet.categoryId);
 
         if (petBreeds) {
           setPetBreeds(petBreeds);

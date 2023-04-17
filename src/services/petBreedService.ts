@@ -6,7 +6,7 @@ export interface IPetBreed {
   about: string;
 }
 
-export async function findAllByCategory(
+export async function findAllBreedsByCategory(
   id: string,
 ): Promise<IPetBreed[] | undefined> {
   try {
