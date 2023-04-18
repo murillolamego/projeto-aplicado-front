@@ -23,7 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 
-export default function Signup(): ReactElement {
+export default function Adoption(): ReactElement {
   // TODO implement useReducer
   const [initialPets, setInitialPets] = useState<IPet[]>([]);
   const [categories, setCategories] = useState<IPetCategory[]>([]);
