@@ -19,6 +19,7 @@ import {
   ListItem,
   MenuItem,
   Select,
+  SelectChangeEvent,
   Typography,
 } from "@mui/material";
 
@@ -30,12 +31,19 @@ export default function Signup(): ReactElement {
   const [breeds, setBreeds] = useState<IPetBreed[]>([]);
   const [breed, setBreed] = useState("");
   const [age, setAge] = useState("");
+  const [size, setSize] = useState("");
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
   const [pets, setPets] = useState<IPet[]>([]);
   const [listLoading, setListLoading] = useState(true);
 
-  const handleCategorySelect = async (event): Promise<void> => {
+  // TODO bundle handle select functions
+  const handleCategorySelect = async (
+    event: SelectChangeEvent<string>,
+  ): Promise<void> => {
     setListLoading(true);
-    setCategory(event.target.value as string);
+    setCategory(event.target.value);
     setBreeds([]);
 
     if (event.target.value != "all") {
@@ -58,9 +66,11 @@ export default function Signup(): ReactElement {
     setListLoading(false);
   };
 
-  const handleBreedSelect = async (event): Promise<void> => {
+  const handleBreedSelect = async (
+    event: SelectChangeEvent<string>,
+  ): Promise<void> => {
     setListLoading(true);
-    setBreed(event.target.value as string);
+    setBreed(event.target.value);
 
     if (event.target.value != "all") {
       const petsFromBreed = initialPets.filter(
@@ -78,13 +88,47 @@ export default function Signup(): ReactElement {
     setListLoading(false);
   };
 
-  const handleAgeSelect = async (event): Promise<void> => {
-    setAge(event.target.value as string);
+  const handleAgeSelect = async (
+    event: SelectChangeEvent<string>,
+  ): Promise<void> => {
+    setAge(event.target.value);
 
     // TODO filter pets from AGE
   };
 
-  const getAge = (birthdate) => {
+  const handleSizeSelect = async (
+    event: SelectChangeEvent<string>,
+  ): Promise<void> => {
+    setSize(event.target.value);
+
+    // TODO filter pets from SIZE
+  };
+
+  const handleCountrySelect = async (
+    event: SelectChangeEvent<string>,
+  ): Promise<void> => {
+    setCountry(event.target.value);
+
+    // TODO filter pets from SIZE
+  };
+
+  const handleStateSelect = async (
+    event: SelectChangeEvent<string>,
+  ): Promise<void> => {
+    setState(event.target.value);
+
+    // TODO filter pets from SIZE
+  };
+
+  const handleCitySelect = async (
+    event: SelectChangeEvent<string>,
+  ): Promise<void> => {
+    setCity(event.target.value);
+
+    // TODO filter pets from SIZE
+  };
+
+  const getAge = (birthdate: string): string | undefined => {
     const now = dayjs();
     const birth = dayjs(birthdate);
     const years = now.diff(birth, "y");
@@ -113,8 +157,8 @@ export default function Signup(): ReactElement {
         if (initialPets) {
           setInitialPets(initialPets);
           setPets(initialPets);
-          setListLoading(false);
         }
+        setListLoading(false);
       }
 
       if (categories.length === 0) {
@@ -126,7 +170,7 @@ export default function Signup(): ReactElement {
         }
       }
     })();
-  }, [pets, categories]);
+  }, [pets, categories, initialPets]);
 
   return (
     <>
@@ -138,17 +182,20 @@ export default function Signup(): ReactElement {
       </Head>
       <main className="flex justify-center w-screen h-screen">
         <div className="container xl:max-w-screen-xl p-0 flex">
-          <div className="flex flex-col h-screen items-start pe-3 border-r border-r-orange-400">
+          <div className="flex flex-col h-screen items-start pe-3 border-r-2 border-r-orange-400">
             <div className="relative w-24 h-24 lg:w-64 lg:h-64">
               <Image
                 className="object-contain"
                 src="/adopt.svg"
-                alt="Drawing of a french bulldog sitting looking back at you"
+                alt="Drawing of animals"
                 fill
                 priority
               />
             </div>
-            <Typography variant="h4" className="text-center font-bold">
+            <Typography
+              variant="h5"
+              className="text-center font-bold text-[#31676B]"
+            >
               Adopt a friend!
             </Typography>
             <Box sx={{ minWidth: 120 }} className="w-full">
@@ -209,12 +256,104 @@ export default function Signup(): ReactElement {
                 <Select
                   labelId="demo-simple-age-select-label"
                   id="demo-simple-age-select"
-                  disabled={!breed}
                   label="Age"
-                  value=""
+                  disabled={pets.length === 0}
+                  value="all"
                   onChange={(event): Promise<void> => handleAgeSelect(event)}
                 >
-                  <MenuItem value={5}>any</MenuItem>
+                  <MenuItem value={"all"}>all</MenuItem>
+                  <MenuItem value={10}>0 - 6 months</MenuItem>
+                  <MenuItem value={20}>6 months - 1 year</MenuItem>
+                  <MenuItem value={30}>1 - 2 years</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth className="my-3">
+                <InputLabel id="demo-simple-size-select-label">Size</InputLabel>
+                <Select
+                  labelId="demo-simple-size-select-label"
+                  id="demo-simple-size-select"
+                  label="Size"
+                  disabled={pets.length === 0}
+                  value="all"
+                  onChange={(event): Promise<void> => handleSizeSelect(event)}
+                >
+                  <MenuItem value={"all"}>all</MenuItem>
+                  <MenuItem value={"small"}>small</MenuItem>
+                  <MenuItem value={"medium"}>medium</MenuItem>
+                  <MenuItem value={"large"}>large</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <Typography
+              variant="h5"
+              className="text-center font-bold text-[#31676B]"
+            >
+              Location
+            </Typography>
+            <Box sx={{ minWidth: 120 }} className="w-full">
+              <FormControl fullWidth className="my-3">
+                <InputLabel id="demo-simple-country-select-label">
+                  Country
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-country-select-label"
+                  id="demo-simple-country-select"
+                  disabled={categories.length === 0}
+                  label="Country"
+                  value={
+                    category && categories.some((e) => e.id === category)
+                      ? category
+                      : "all"
+                  }
+                  onChange={(event): Promise<void> =>
+                    handleCountrySelect(event)
+                  }
+                >
+                  <MenuItem key={"all"} value={"all"}>
+                    all
+                  </MenuItem>
+                  {categories.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth className="my-3">
+                <InputLabel id="demo-simple-state-select-label">
+                  State
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-state-select-label"
+                  id="demo-simple-state-select"
+                  disabled={breeds.length === 0}
+                  label="State"
+                  value={
+                    breed && breeds.some((e) => e.id === breed) ? breed : "all"
+                  }
+                  onChange={(event): Promise<void> => handleStateSelect(event)}
+                >
+                  <MenuItem key={"all"} value={"all"}>
+                    all
+                  </MenuItem>
+                  {breeds.map((breed) => (
+                    <MenuItem key={breed.id} value={breed.id}>
+                      {breed.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth className="my-3">
+                <InputLabel id="demo-simple-city-select-label">City</InputLabel>
+                <Select
+                  labelId="demo-simple-city-select-label"
+                  id="demo-simple-city-select"
+                  label="City"
+                  disabled={pets.length === 0}
+                  value="all"
+                  onChange={(event): Promise<void> => handleCitySelect(event)}
+                >
+                  <MenuItem value={"all"}>all</MenuItem>
                   <MenuItem value={10}>0 - 6 months</MenuItem>
                   <MenuItem value={20}>6 months - 1 year</MenuItem>
                   <MenuItem value={30}>1 - 2 years</MenuItem>
@@ -227,7 +366,7 @@ export default function Signup(): ReactElement {
               {pets.map((pet) => (
                 <ListItem
                   key={pet.id}
-                  className="flex p-3 items-start border-b border-b-orange-400"
+                  className="flex p-3 items-start border-b-2 border-b-orange-400"
                 >
                   <Avatar
                     className="object-contain border border-orange-400"
