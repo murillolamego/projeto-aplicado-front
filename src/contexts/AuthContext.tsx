@@ -17,6 +17,7 @@ interface IUser {
   name: string;
   phone?: string;
   pets?: IPet[];
+  follows?: IPet[];
 }
 
 export interface ISignInData {

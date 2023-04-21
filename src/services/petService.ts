@@ -101,3 +101,18 @@ export async function findPetByUsername(
     console.error(error);
   }
 }
+
+export async function followPet(
+  followerId: string,
+  id: string,
+): Promise<IPet | undefined> {
+  try {
+    const response = await axios.post<IPet>(
+      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/pets/${followerId}/follow/${id}`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}

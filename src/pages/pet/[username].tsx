@@ -4,12 +4,20 @@ import { ReactElement, useContext, useEffect, useState } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { findPetByUsername, IPet } from "@/services/petService";
+import { followPet } from "@/services/userService";
 
 export default function Dashboard(): ReactElement {
   const { user, setUser } = useContext(AuthContext);
   const [pet, setPet] = useState<IPet | null>();
   const router = useRouter();
   const { username } = router.query;
+
+  const handleFollow = async () => {
+    if (user && pet?.id) {
+      const test = await followPet(user?.sub, pet?.id);
+      console.log(test);
+    }
+  };
 
   useEffect(() => {
     (async (): Promise<void> => {
@@ -36,6 +44,7 @@ export default function Dashboard(): ReactElement {
         <h1>PET {username}</h1>
         <h2>Breed: {pet?.Breed?.name}</h2>
         <h2>Category: {pet?.Category?.name}</h2>
+        <button onClick={() => handleFollow()}>Follow</button>
       </main>
     </>
   );

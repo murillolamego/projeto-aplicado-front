@@ -13,7 +13,11 @@ import {
   IPetCategory,
 } from "@/services/petCategoryService";
 import { addPet, IPet } from "@/services/petService";
-import { findUserById, getUserPets } from "@/services/userService";
+import {
+  findUserById,
+  getUserFollows,
+  getUserPets,
+} from "@/services/userService";
 import { PhotoCamera } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -37,8 +41,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export default function Dashboard(): ReactElement {
   const { user, setUser } = useContext(AuthContext);
-
-  const [pets, setPets] = useState<IPet[]>([]);
 
   const [pet, setPet] = useState<IPet>({
     username: "",
@@ -66,8 +68,8 @@ export default function Dashboard(): ReactElement {
     console.log("ADD PET");
     const data = await addPet(pet, file);
 
-    if (data) {
-      console.log("CREATED USER", user);
+    if (user && user.pets && data) {
+      setUser({ ...user, pets: [...user.pets, data] });
       enqueueSnackbar({
         message: "Pet successfully added",
         variant: "success",
@@ -119,6 +121,7 @@ export default function Dashboard(): ReactElement {
   };
 
   useEffect(() => {
+    console.log("USE EFFECT");
     (async (): Promise<void> => {
       if (user && !user?.name) {
         setPet({ ...pet, guardianId: user.sub });
@@ -133,9 +136,7 @@ export default function Dashboard(): ReactElement {
         const pets = await getUserPets(user?.sub);
 
         if (pets) {
-          setPets(pets);
-          user.pets = pets;
-          setUser(user);
+          setUser({ ...user, pets });
         }
         console.log("USER with pets", user);
       }
@@ -155,8 +156,16 @@ export default function Dashboard(): ReactElement {
           setPetBreeds(petBreeds);
         }
       }
+
+      if (!user?.follows) {
+        const userFollows = await getUserFollows(user?.sub);
+
+        if (user && userFollows) {
+          setUser({ ...user, follows: userFollows });
+        }
+      }
     })();
-  }, [user, setUser, pet, pets, petCategories, petBreeds]);
+  }, [user, setUser, pet, petCategories, petBreeds]);
 
   return (
     <>
@@ -190,6 +199,9 @@ export default function Dashboard(): ReactElement {
                 </Typography>
                 <Typography variant="h6" className="text-center font-bold">
                   @{user?.username}
+                </Typography>
+                <Typography variant="h6" className="text-center font-bold">
+                  Following: {user?.follows?.length}
                 </Typography>
               </div>
               <List className="flex flex-wrap justify-start items-start h-max">

@@ -67,3 +67,30 @@ export async function getUserPets(id: string): Promise<IPet[] | undefined> {
     console.error(error);
   }
 }
+
+export async function getUserFollows(id: string): Promise<IPet[] | undefined> {
+  try {
+    const response = await axios.get<IPet[]>(
+      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/users/${id}/follows`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function followPet(
+  followerId: string,
+  followingId: string,
+): Promise<boolean | undefined> {
+  try {
+    const response = await axios.post<boolean>(
+      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/users/${followerId}/follow/${followingId}`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
