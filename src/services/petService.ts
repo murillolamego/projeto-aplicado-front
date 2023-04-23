@@ -76,6 +76,34 @@ export async function findAllPetsWithRelations(): Promise<IPet[] | undefined> {
   }
 }
 
+export async function findAllPetsAdoptionWithRelations(): Promise<
+  IPet[] | undefined
+> {
+  try {
+    const response = await axios.get<IPet[]>(
+      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/pets/adoption`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function findAllPetsProcreationWithRelations(): Promise<
+  IPet[] | undefined
+> {
+  try {
+    const response = await axios.get<IPet[]>(
+      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/pets/procreation`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function findPetById(id: string): Promise<IPet | undefined> {
   try {
     const response = await axios.get<IPet>(

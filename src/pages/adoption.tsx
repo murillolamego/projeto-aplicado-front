@@ -8,7 +8,11 @@ import {
   findAllPetCategories,
   IPetCategory,
 } from "@/services/petCategoryService";
-import { findAllPetsWithRelations, IPet } from "@/services/petService";
+import {
+  findAllPetsAdoptionWithRelations,
+  findAllPetsWithRelations,
+  IPet,
+} from "@/services/petService";
 import {
   Avatar,
   Box,
@@ -152,7 +156,7 @@ export default function Adoption(): ReactElement {
   useEffect(() => {
     (async (): Promise<void> => {
       if (initialPets.length === 0) {
-        const initialPets = await findAllPetsWithRelations();
+        const initialPets = await findAllPetsAdoptionWithRelations();
 
         if (initialPets) {
           setInitialPets(initialPets);
