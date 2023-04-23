@@ -5,7 +5,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 import "@/styles/globals.css";
 import { createTheme, ThemeProvider } from "@mui/material";
-import { green, orange } from "@mui/material/colors";
+import { green, yellow } from "@mui/material/colors";
 
 declare module "@mui/material/styles" {
   interface Theme {
@@ -23,8 +23,12 @@ declare module "@mui/material/styles" {
 export default function App({ Component, pageProps }: AppProps) {
   const theme = createTheme({
     palette: {
-      primary: orange,
-      secondary: green,
+      primary: {
+        main: "#F8D152",
+      },
+      secondary: {
+        main: "#45BBBD",
+      },
     },
   });
 

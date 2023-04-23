@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
 import { ReactElement, useContext, useEffect, useState, Fragment } from "react";
@@ -20,7 +21,12 @@ import {
 } from "@/services/userService";
 import { PhotoCamera } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import ChatBubbleRoundedIcon from "@mui/icons-material/ChatBubbleRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
   Avatar,
   Box,
@@ -30,9 +36,14 @@ import {
   InputLabel,
   List,
   ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   MenuItem,
   Modal,
   Select,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -51,6 +62,12 @@ export default function Dashboard(): ReactElement {
     breedId: "",
     guardianId: "",
   });
+
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
   const [petCategories, setPetCategories] = useState<IPetCategory[]>([]);
 
@@ -120,6 +137,39 @@ export default function Dashboard(): ReactElement {
     }
   };
 
+  interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+  }
+
+  function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box sx={{ p: 3 }}>
+            <Typography>{children}</Typography>
+          </Box>
+        )}
+      </div>
+    );
+  }
+
+  function a11yProps(index: number) {
+    return {
+      id: `simple-tab-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`,
+    };
+  }
+
   useEffect(() => {
     console.log("USE EFFECT");
     (async (): Promise<void> => {
@@ -175,300 +225,117 @@ export default function Dashboard(): ReactElement {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex p-0 justify-center w-screen h-screen">
-        <div className="container xl:max-w-screen-xl p-0 flex">
-          <div className="flex flex-col h-screen items-start border-r border-r-orange-400">
-            <>
-              <div className="py-2">
-                <Avatar
-                  className="mx-auto object-contain border border-orange-400"
-                  alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
-                  src={
-                    user?.avatar &&
-                    `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${user?.avatar}`
-                  }
-                  sx={{
-                    width: 180,
-                    height: 180,
-                    fontSize: 120,
-                    objectFit: "contain",
-                  }}
-                />
-                <Typography variant="h4" className="text-center font-bold">
-                  {user?.name}
-                </Typography>
-                <Typography variant="h6" className="text-center font-bold">
-                  @{user?.username}
-                </Typography>
-                <Typography variant="h6" className="text-center font-bold">
-                  Following: {user?.follows?.length}
-                </Typography>
-              </div>
-              <List className="flex flex-wrap justify-start items-start h-max">
-                <h2>Pets</h2>
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="label"
-                  onClick={handleOpen}
-                >
-                  <AddCircleOutlineIcon />
-                </IconButton>
-                {user &&
-                  user.pets &&
-                  user.pets.map((pet, index) => (
-                    <Fragment key={pet.id}>
-                      {(index === 0 ||
-                        pet.Category?.id !=
-                          user?.pets[index - 1].Category?.id) && (
-                        <ListItem>
-                          <Typography
-                            variant="h5"
-                            className=" capitalize"
-                            key={pet.Category?.id}
-                          >
-                            {pet.Category?.name}
-                          </Typography>
-                        </ListItem>
-                      )}
-                      <ListItem className="w-fit p-1">
-                        <Link href={`/pet/${pet.username}`}>
-                          <Avatar
-                            className="object-contain border border-orange-400"
-                            alt={
-                              pet?.name ? `${pet.name}'s avatar` : "User avatar"
-                            }
-                            src={
-                              pet?.avatar &&
-                              `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${pet?.avatar}`
-                            }
-                            sx={{
-                              width: 80,
-                              height: 80,
-                              fontSize: 80,
-                              objectFit: "contain",
-                              cursor: "pointer",
-                            }}
-                          />
-                          <Typography variant="h6" className="text-center">
-                            {pet.name}
-                          </Typography>
-                        </Link>
-                      </ListItem>
-                    </Fragment>
-                  ))}
-              </List>
-            </>
-            <Modal
-              open={openCreatePet}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box
-                component="form"
+      <main className="flex p-0 justify-center w-full h-screen relative ">
+        <div className="w-full h-[calc(100%_-_5.4rem)] bg-primary absolute bottom-0 left-0 -z-10"></div>
+        <div className="container xl:max-w-screen-xl p-0 h-screen text-white">
+          <div className="flex flex-col items-center justify-center h-40 relative w-fit mx-auto">
+            <Avatar
+              className="mx-auto object-contain border-4 border-white"
+              alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
+              src={
+                user?.avatar &&
+                `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${user?.avatar}`
+              }
+              sx={{
+                width: 140,
+                height: 140,
+                fontSize: 140,
+                objectFit: "contain",
+              }}
+            />
+          </div>
+          <Typography variant="h4" className="text-center font-bold my-8">
+            {user?.name}
+          </Typography>
+          <Box className="flex flex-col justify-center items-center">
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                aria-label="basic tabs example"
                 sx={{
-                  "& .MuiTextField-root": {
-                    m: 1,
-                    width: "25ch",
+                  ".MuiTab-root": {
+                    color: "#ffffff",
+                    fontWeight: "bold",
+                  },
+                  ".Mui-selected": {
+                    color: "#ffffff",
+                    fontWeight: "bold",
                   },
                 }}
-                noValidate
-                autoComplete="off"
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-md p-8 flex-row items-center"
+                TabIndicatorProps={{ style: { background: "#ffffff" } }}
               >
-                <div className="relative w-fit mx-auto">
-                  <label htmlFor="inputFile">
+                <Tab label="Pets" {...a11yProps(0)} />
+                <Tab label="Following" {...a11yProps(1)} />
+                <Tab label="Likes" {...a11yProps(2)} />
+                <Tab label="Comments" {...a11yProps(3)} />
+              </Tabs>
+            </Box>
+            <TabPanel value={value} index={0}>
+              {/* <List className="flex flex-col">
+                <ListItem className="w-fit p-1">
+                  <Link
+                    href={`/pet/${pet.username}`}
+                    className="flex items-center"
+                  >
                     <Avatar
-                      className="object-contain border border-orange-400"
+                      className="object-contain border-2 border-white"
                       alt={pet?.name ? `${pet.name}'s avatar` : "User avatar"}
-                      src={pet?.avatar}
+                      src={
+                        pet?.avatar &&
+                        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${pet?.avatar}`
+                      }
                       sx={{
-                        width: 180,
-                        height: 180,
-                        fontSize: 120,
+                        width: 70,
+                        height: 70,
+                        fontSize: 70,
                         objectFit: "contain",
                         cursor: "pointer",
                       }}
                     />
-                  </label>
-                  <IconButton
-                    className="absolute start-0 bottom-0"
-                    color="primary"
-                    aria-label="upload avatar"
-                    component="label"
+                    <Typography variant="h6" className="text-center">
+                      Pet 1
+                    </Typography>
+                  </Link>
+                </ListItem>
+                <ListItem className="w-fit p-1">
+                  <Link
+                    href={`/pet/${pet.username}`}
+                    className="flex items-center"
                   >
-                    <input
-                      hidden
-                      id="inputFile"
-                      name="inputFile"
-                      accept="image/*"
-                      type="file"
-                      onChange={(e): void => {
-                        fileHandler(e);
-                        e.target.value = "";
+                    <Avatar
+                      className="object-contain border-2 border-white"
+                      alt={pet?.name ? `${pet.name}'s avatar` : "User avatar"}
+                      src={
+                        pet?.avatar &&
+                        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${pet?.avatar}`
+                      }
+                      sx={{
+                        width: 70,
+                        height: 70,
+                        fontSize: 70,
+                        objectFit: "contain",
+                        cursor: "pointer",
                       }}
                     />
-                    <PhotoCamera sx={{ fontSize: 32 }} />
-                  </IconButton>
-                  <IconButton
-                    className="absolute end-0 bottom-0"
-                    color="primary"
-                    aria-label="delete avatar"
-                    component="label"
-                    onClick={(): void => {
-                      setPet({ ...pet, avatar: "" });
-                      setFile(null);
-                    }}
-                  >
-                    <DeleteIcon sx={{ fontSize: 32 }} />
-                  </IconButton>
-                </div>
-                <TextField
-                  required
-                  type="text"
-                  label="Pet's name"
-                  placeholder="Pet's name"
-                  value={pet?.username && pet.username}
-                  onChange={(e): void =>
-                    setPet({ ...pet, username: e.target.value })
-                  }
-                />
-                <TextField
-                  required
-                  type="text"
-                  label="Username"
-                  placeholder="Pet's username"
-                  value={pet?.name && pet.name}
-                  onChange={(e): void =>
-                    setPet({ ...pet, name: e.target.value })
-                  }
-                />
-
-                <FormControl required sx={{ m: 1, minWidth: 120 }}>
-                  <InputLabel id="demo-simple-select-required-label">
-                    Category
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-required-label"
-                    id="demo-simple-select-required"
-                    label="Category *"
-                    disabled={petCategories.length < 1}
-                    value={pet.categoryId || ""}
-                    onChange={(e): void => {
-                      setPetBreeds([]);
-                      setPet({
-                        ...pet,
-                        categoryId: e.target.value,
-                        breedId: "",
-                      });
-                    }}
-                  >
-                    {petCategories.map((petCategory) => (
-                      <MenuItem key={petCategory.id} value={petCategory.id}>
-                        {petCategory.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl required sx={{ m: 1, minWidth: 120 }}>
-                  <InputLabel id="demo-simple-select-required-label">
-                    Breed
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-required-label"
-                    id="demo-simple-select-required"
-                    label="Category *"
-                    disabled={petBreeds.length < 1}
-                    value={pet.breedId || ""}
-                    onChange={(e): void =>
-                      setPet({ ...pet, breedId: e.target.value })
-                    }
-                  >
-                    {petBreeds.map((petBreed) => (
-                      <MenuItem key={petBreed.id} value={petBreed.id}>
-                        {petBreed.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Pet's birthday"
-                    format="DD/MM/YYYY"
-                    onChange={(birthdate): void => {
-                      setPet({
-                        ...pet,
-                        birthdate: dayjs(birthdate as string).toString(),
-                      });
-                      console.log("PET AGE", pet.birthdate);
-                    }}
-                  />
-                </LocalizationProvider>
-
-                <Button onClick={handleAddPet} sx={{ mr: 1 }}>
-                  Sign up
-                </Button>
-              </Box>
-            </Modal>
-          </div>
-          <List className="flex-auto h-max">
-            <ListItem className="flex p-3 items-start border-b border-b-orange-400">
-              <Avatar
-                className="object-contain border border-orange-400"
-                alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
-                src={
-                  user?.avatar &&
-                  `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${user?.avatar}`
-                }
-                sx={{
-                  width: 80,
-                  height: 80,
-                  fontSize: 80,
-                  objectFit: "contain",
-                }}
-              />
-              <div className="flex px-3 items-start flex-wrap">
-                <Typography variant="h6">{user?.name}</Typography>
-                <Typography variant="body1">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Aliquam mattis, ante vel pretium vulputate, ligula ipsum
-                  eleifend augue, vel sagittis eros risus a felis. Morbi pretium
-                  tincidunt lacinia.
-                </Typography>
-              </div>
-            </ListItem>
-            <ListItem className="flex p-3 items-start border-b border-b-orange-400">
-              <Avatar
-                className="object-contain border border-orange-400"
-                alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
-                src={
-                  user?.avatar &&
-                  `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${user?.avatar}`
-                }
-                sx={{
-                  width: 80,
-                  height: 80,
-                  fontSize: 80,
-                  objectFit: "contain",
-                }}
-              />
-              <div className="flex px-3 items-start flex-wrap">
-                <Typography variant="h6">{user?.name}</Typography>
-                <Typography variant="body1">
-                  orem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Vestibulum fringilla nunc nec augue ultrices scelerisque. Nam
-                  nec sem ac urna finibus venenatis a ut odio. Nulla facilisi.
-                  Etiam nunc libero, sodales ac tincidunt tempus, blandit vitae
-                  lacus. Sed ut finibus nibh. Curabitur non pharetra nisl.
-                  Quisque rhoncus turpis venenatis, lacinia nulla a, volutpat
-                  nunc.
-                </Typography>
-              </div>
-            </ListItem>
-          </List>
+                    <Typography variant="h6" className="text-center">
+                      Pet 2
+                    </Typography>
+                  </Link>
+                </ListItem>
+              </List> */}
+              Item One
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              Item Two
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+              Item Three
+            </TabPanel>
+            <TabPanel value={value} index={3}>
+              Item Four
+            </TabPanel>
+          </Box>
         </div>
       </main>
     </>
