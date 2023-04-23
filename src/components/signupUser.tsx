@@ -16,7 +16,7 @@ import { FormUserBasicInfo } from "./forms/formUserBasicInfo";
 import { FormUserConfirmInfo } from "./forms/formUserConfirmInfo";
 import { FormUserMoreInfo } from "./forms/formUserMoreInfo";
 
-const steps = ["User 1", "User 2"];
+const steps = ["Basic info", "Custom info"];
 
 export function SignupUser(): ReactElement {
   const { user, file } = useContext(UserSignupContext);
@@ -85,8 +85,14 @@ export function SignupUser(): ReactElement {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Stepper activeStep={activeStep}>
+    <Box className="flex flex-col px-10">
+      <Typography
+        variant="h1"
+        className="text-center font-chicle text-secondary mb-12"
+      >
+        Caramelo
+      </Typography>
+      <Stepper activeStep={activeStep} className=" mb-12">
         {steps.map((label, index) => {
           const stepProps: { completed?: boolean } = {};
           const labelProps: {
@@ -110,42 +116,53 @@ export function SignupUser(): ReactElement {
       {activeStep === steps.length ? (
         <Fragment>
           <FormUserConfirmInfo />
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
+          <Box
+            sx={{ display: "flex", flexDirection: "row", pt: 2 }}
+            className="mt-12"
+          >
+            <button
               onClick={handleReset}
-              sx={{ mr: 1 }}
+              className="px-6 border p-3 bg-secondary font-bold text-white rounded-md hover:bg-hoverSecondary ease-in-out duration-300"
+              type="submit"
             >
               Reset
-            </Button>
+            </button>
             <Box sx={{ flex: "1 1 auto" }} />
-            <Button onClick={handleSignup} sx={{ mr: 1 }}>
+            <button
+              onClick={handleSignup}
+              className="px-6 border p-3 bg-secondary font-bold text-white rounded-md hover:bg-hoverSecondary ease-in-out duration-300"
+              type="submit"
+            >
               Sign up
-            </Button>
+            </button>
           </Box>
         </Fragment>
       ) : (
         <Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
           {activeStep === 0 && <FormUserBasicInfo />}
           {activeStep === 1 && <FormUserMoreInfo />}
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
+          <Box sx={{ display: "flex", flexDirection: "row" }} className="mt-12">
+            <button
               onClick={handleBack}
-              sx={{ mr: 1 }}
+              disabled={activeStep === 0}
+              className="px-6 border p-3 bg-secondary font-bold text-white rounded-md hover:bg-hoverSecondary ease-in-out duration-300 disabled:bg-gray-300"
+              type="submit"
             >
               Back
-            </Button>
+            </button>
             <Box sx={{ flex: "1 1 auto" }} />
             {isStepOptional(activeStep) && (
               <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
                 Skip
               </Button>
             )}
-            <Button onClick={handleNext}>Next</Button>
+            <button
+              onClick={handleNext}
+              className="px-6 border p-3 bg-secondary font-bold text-white rounded-md hover:bg-hoverSecondary ease-in-out duration-300"
+              type="submit"
+            >
+              Next
+            </button>
           </Box>
         </Fragment>
       )}

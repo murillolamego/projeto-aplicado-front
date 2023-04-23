@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Image from "next/image";
 import { ReactElement } from "react";
 
 import { SignupUser } from "@/components/signupUser";
@@ -13,9 +14,20 @@ export default function Signup(): ReactElement {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex items-center justify-center w-screen h-screen">
-        <div className="container flex items-center justify-center">
-          <div className="flex flex-col z-10 ">
+      <main className="flex">
+        <div className="container xl:max-w-screen-xl flex items-center mx-auto h-full">
+          <div className="flex w-full h-screen flex-1 bg-primary">
+            <div className="relative w-full">
+              <Image
+                className="object-contain"
+                src="/paw-print.svg"
+                alt="Drawing of a french bulldog sitting looking back at you"
+                fill
+                priority
+              />
+            </div>
+          </div>
+          <div className="flex-1 relative">
             <UserSignupProvider>
               <SignupUser />
             </UserSignupProvider>

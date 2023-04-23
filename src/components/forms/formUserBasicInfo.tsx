@@ -35,14 +35,9 @@ export function FormUserBasicInfo(): ReactElement {
   return (
     <Box
       component="form"
-      sx={{
-        "& .MuiTextField-root": {
-          m: 1,
-          width: "25ch",
-        },
-      }}
       noValidate
       autoComplete="off"
+      className="flex flex-col w-full space-y-6"
     >
       <TextField
         required
@@ -60,7 +55,7 @@ export function FormUserBasicInfo(): ReactElement {
         value={user?.email && user.email}
         onChange={(e): void => setUser({ ...user, email: e.target.value })}
       />
-      <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+      <FormControl variant="outlined">
         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"

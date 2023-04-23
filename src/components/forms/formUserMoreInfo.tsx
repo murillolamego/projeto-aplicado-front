@@ -139,27 +139,20 @@ export function FormUserMoreInfo(): ReactElement {
   return (
     <Box
       component="form"
-      sx={{
-        m: 1,
-        width: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+      className="flex flex-col w-full"
       noValidate
       autoComplete="off"
     >
-      <div className="relative">
+      <div className="relative w-fit mx-auto  mb-12">
         <label htmlFor="inputFile">
           <Avatar
             className="object-contain border-gray-400"
             alt={user?.name ? `${user.name}'s avatar` : "User avatar"}
             src={user?.avatar}
             sx={{
-              width: 180,
-              height: 180,
-              fontSize: 120,
+              width: 140,
+              height: 140,
+              fontSize: 140,
               objectFit: "contain",
               cursor: "pointer",
             }}
@@ -197,18 +190,7 @@ export function FormUserMoreInfo(): ReactElement {
           <DeleteIcon sx={{ fontSize: 32 }} />
         </IconButton>
       </div>
-      <Typography sx={{ mt: 2, mb: 1, fontSize: 40, fontWeight: "bold" }}>
-        {user?.name && user.name}
-      </Typography>
-      <Box
-        component="div"
-        sx={{
-          "& .MuiTextField-root": {
-            m: 1,
-            width: "25ch",
-          },
-        }}
-      >
+      <Box component="div" className="flex flex-col space-y-6">
         <TextField
           required
           select

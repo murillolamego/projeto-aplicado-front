@@ -60,7 +60,7 @@ export default function Home(): ReactElement {
               />
             </div>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <Typography
               variant="h1"
               className="text-center font-chicle text-secondary mb-12 px-10"
@@ -115,7 +115,7 @@ export default function Home(): ReactElement {
               >
                 Sign in
               </button>
-              <div className="mt-5 flex justify-between text-md text-gray-600">
+              <div className="mt-12 flex justify-between text-md text-gray-600">
                 <a href="#">Forgot password?</a>
                 <a href="#">Sign up</a>
               </div>
