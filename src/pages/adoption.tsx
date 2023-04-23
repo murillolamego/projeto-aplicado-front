@@ -180,9 +180,10 @@ export default function Adoption(): ReactElement {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex justify-center w-screen h-screen">
+      <main className="flex p-0 justify-center relative">
+        <div className="bg-primary w-3/4 -z-10 h-full absolute top-0 right-0"></div>
         <div className="container xl:max-w-screen-xl p-0 flex">
-          <div className="flex flex-col h-screen items-start pe-3 border-r-2 border-r-orange-400">
+          <div className="flex flex-col h-full items-start pr-10 w-[60%] bg-white px-3 text-white">
             <div className="relative w-24 h-24 lg:w-64 lg:h-64">
               <Image
                 className="object-contain"
@@ -362,28 +363,28 @@ export default function Adoption(): ReactElement {
             </Box>
           </div>
           {!listLoading ? (
-            <List className="flex-auto h-max">
+            <List
+              className="flex-auto w-[240%] h-max p-10 grid grid-cols-2 auto-rows-fr gap-6"
+              disablePadding
+            >
               {pets.map((pet) => (
                 <ListItem
                   key={pet.id}
-                  className="flex p-3 items-start border-b-2 border-b-orange-400"
+                  className="flex p-0 items-start w-full h-full bg-white rounded-3xl overflow-hidden flex-1"
                 >
-                  <Avatar
-                    className="object-contain border border-orange-400"
-                    alt={pet?.name ? `${pet.name}'s avatar` : "Pet avatar"}
-                    src={
-                      pet?.avatar &&
-                      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/${pet?.avatar}`
-                    }
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      fontSize: 80,
-                      objectFit: "contain",
-                    }}
-                  />
-                  <div className="flex px-3 items-start flex-wrap">
-                    <Typography variant="h6">{pet.name}</Typography>
+                  <div className="flex w-full h-auto flex-1 justify-self-stretch self-stretch relative">
+                    <div className="mx-10 w-full h-full">
+                      <Image
+                        className="object-cover border-2 border-white rounded-l-3xl"
+                        src="https://images.unsplash.com/photo-1589965716319-4a041b58fa8a"
+                        alt="Drawing of a french bulldog sitting looking back at you"
+                        fill
+                        priority
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-1 flex-col p-3 items-start flex-wrap">
+                    <Typography variant="h4">{pet.name}</Typography>
                     <Typography variant="body1">
                       Category: {pet.Category?.name}
                     </Typography>
@@ -391,7 +392,7 @@ export default function Adoption(): ReactElement {
                       Breed: {pet.Breed?.name}
                     </Typography>
                     <Typography variant="body1">
-                      Birthdate: {getAge(pet.birthdate)}
+                      Age: {getAge(pet.birthdate)}
                     </Typography>
                     <Typography variant="body1">
                       Guardian: {pet.Guardian?.name}

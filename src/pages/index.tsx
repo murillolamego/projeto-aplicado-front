@@ -17,7 +17,7 @@ export default function Signup(): ReactElement {
       <main className="flex">
         <div className="container xl:max-w-screen-xl flex items-center mx-auto h-full">
           <div className="flex w-full h-screen flex-1 bg-primary">
-            <div className="relative w-full">
+            <div className="relative w-full mx-10">
               <Image
                 className="object-contain"
                 src="/paw-print.svg"
